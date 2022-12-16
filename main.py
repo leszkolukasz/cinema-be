@@ -1,6 +1,10 @@
-from fastapi import FastAPI
+from src.database.setup import engine
+from src.models import *
+from src.models.base import Base
+from src.controllers import *
+from src.router import app
 
-app = FastAPI()
+Base.metadata.create_all(bind=engine)
 
 # @app.post("/users/", response_model=schemas.User)
 # def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):

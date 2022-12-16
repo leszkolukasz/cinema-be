@@ -4,11 +4,10 @@ from sqlalchemy.orm import relationship
 from .base import Base
 from .constraints import positive
 
+
 class Cinema(Base):
     __tablename__ = "cinemas"
-    __table_args__ = (
-        UniqueConstraint("name", "address", name="name_address_unique"),
-    )
+    __table_args__ = (UniqueConstraint("name", "address", name="name_address_unique"),)
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
@@ -39,7 +38,9 @@ class Screening(Base):
     id = Column(Integer, primary_key=True)
     movie_id = Column(Integer, ForeignKey("movies.id"), nullable=False)
     room_id = Column(Integer, ForeignKey("rooms.id"), nullable=False)
-    date = Column(Date, nullable=False) # trigger zeby w tym samym czasie, pokoju nie byly 2 screeningi
+    date = Column(
+        Date, nullable=False
+    )  # trigger zeby w tym samym czasie, pokoju nie byly 2 screeningi
 
     movie = relationship("Movie", back_populates="screenings")
     room = relationship("Room", back_populates="screenings")

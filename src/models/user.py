@@ -14,13 +14,13 @@ class User(Base):
 
     reviews = relationship("Review", back_populates="user")
     reservations = relationship("Reservation", back_populates="user")
-    managed_cinemas = relationship("Cinema", back_populates="administrator")
+    managed_cinemas = relationship("Cinema", back_populates="admin")
 
 
 class Reservation(Base):
-    __tablename__ = "users"
+    __tablename__ = "reservations"
     __table_args__ = (
-        UniqueConstraint("screening_id", "user", name="screen_id_user_unique"),
+        UniqueConstraint("screening_id", "user_id", name="screen_id_user_id_unique"),
         UniqueConstraint("screening_id", "seat", name="screen_id_seat_unique"),
     )
 
