@@ -1,3 +1,3 @@
-from .cinema import *
-from .movie import *
-from .user import *
+from .cinema import Cinema, Room, Screening
+from .movie import Movie, Review
+from .user import User, Reservation
