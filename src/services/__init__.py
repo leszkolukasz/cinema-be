@@ -1,4 +1,10 @@
-from .movies import get_movies_by_id, get_movies_like, get_movie_score_by_id
+from .movies import (
+    get_movies_by_id,
+    get_movies_like,
+    get_movie_score_by_id,
+    add_review_by_movie_id,
+    get_reviews_by_movie_id
+)
 from .security import get_password_hash, verify_password
 from .users import (
     create_user,
