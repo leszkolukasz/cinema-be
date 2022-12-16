@@ -1,11 +1,46 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from .base import Base
+from .constraints import positive
 
-class User(Base):
-    __tablename__ = "users"
+class Cinema(Base):
+    __tablename__ = "cinemas"
+    __table_args__ = (
+        UniqueConstraint("name", "address", name="name_address_unique"),
+    )
 
     id = Column(Integer, primary_key=True)
-    login = Column(String, unique=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    address = Column(String, nullable=False)
+    admin_id = Column(Integer, ForeignKey("users.id"))
+
+    admin = relationship("User", back_populates="managed_cinemas")
+
+
+class Room(Base):
+    __tablename__ = "rooms"
+    __table_args__ = (
+        UniqueConstraint("cinema_id", "name", name="cinema_id_name_unique"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    cinema_id = Column(Integer, ForeignKey("cinemas.id"), nullable=False)
+    name = Column(String, nullable=False)
+    width = Column(Integer, positive("width"), nullable=False)
+    length = Column(Integer, positive("length"), nullable=False)
+
+    screenings = relationship("Screening", back_populates="room")
+
+
+class Screening(Base):
+    __tablename__ = "screenings"
+
+    id = Column(Integer, primary_key=True)
+    movie_id = Column(Integer, ForeignKey("movies.id"), nullable=False)
+    room_id = Column(Integer, ForeignKey("rooms.id"), nullable=False)
+    date = Column(Date, nullable=False) # trigger zeby w tym samym czasie, pokoju nie byly 2 screeningi
+
+    movie = relationship("Movie", back_populates="screenings")
+    room = relationship("Room", back_populates="screenings")
+    reservations = relationship("Reservation", back_populates="screening")
