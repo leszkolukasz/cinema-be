@@ -30,6 +30,6 @@ class Reservation(Base):
     seat = Column(
         Integer, nonnegative("seat"), nullable=False
     )  # needs trigger to check if is correct
-
+    
     screening = relationship("Screening", back_populates="reservations")
     user = relationship("User", back_populates="reservations")

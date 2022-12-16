@@ -1,5 +1,6 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, PrimaryKeyConstraint
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, PrimaryKeyConstraint, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from .base import Base
 from .constraints import between, positive
@@ -31,6 +32,7 @@ class Review(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     text = Column(String)
     score = Column(Integer, between("score", 0, 10), nullable=False)
+    reviewed_on = Column(DateTime, nullable=False, server_default=func.now())
 
     user = relationship("User", back_populates="reviews")
     movie = relationship("Movie", back_populates="reviews")

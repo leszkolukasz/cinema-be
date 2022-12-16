@@ -15,6 +15,10 @@ def get_movies(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Movie not found")
     return movie
 
+@app.get("/movies/{id}/score", response_model=float)
+def get_movie_score(id: int, db: Session = Depends(get_db)):
+    return get_movie_score_by_id(db, id)
+
 
 @app.get("/movies", response_model=list[dto.Movie])
 def get_movies(like: str = "", limit: int = 10, db: Session = Depends(get_db)):

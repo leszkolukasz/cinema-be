@@ -22,3 +22,15 @@ def login(user: dto.User, Authorize: AuthJWT = Depends(), db: Session = Depends(
 
     access_token = Authorize.create_access_token(subject=db_user.id)
     return {"token": access_token, "username": db_user.login}
+
+@app.get("/reservations", response_model=list[dto.Reservation])
+def get_reservations(Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)):
+    Authorize.jwt_required()
+    reservations =  get_reservations_by_user_id(db, Authorize.get_jwt_subject())
+    return [dto.Reservation.from_orm(el) for el in reservations]
+
+@app.delete("/reservations/{id}")
+def delete_reservation(id: int, Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)):
+    Authorize.jwt_required()
+    if not delete_reservation_by_id(db, Authorize.get_jwt_subject(), id):
+        raise HTTPException(status_code=401, detail="Unauthorized")

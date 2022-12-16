@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, UniqueConstraint
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -15,6 +15,7 @@ class Cinema(Base):
     admin_id = Column(Integer, ForeignKey("users.id"))
 
     admin = relationship("User", back_populates="managed_cinemas")
+    rooms = relationship("Room", back_populates="cinema")
 
 
 class Room(Base):
@@ -29,6 +30,7 @@ class Room(Base):
     width = Column(Integer, positive("width"), nullable=False)
     length = Column(Integer, positive("length"), nullable=False)
 
+    cinema = relationship("Cinema", back_populates="rooms")
     screenings = relationship("Screening", back_populates="room")
 
 
@@ -38,8 +40,8 @@ class Screening(Base):
     id = Column(Integer, primary_key=True)
     movie_id = Column(Integer, ForeignKey("movies.id"), nullable=False)
     room_id = Column(Integer, ForeignKey("rooms.id"), nullable=False)
-    date = Column(
-        Date, nullable=False
+    start_time = Column(
+        DateTime, nullable=False
     )  # trigger zeby w tym samym czasie, pokoju nie byly 2 screeningi
 
     movie = relationship("Movie", back_populates="screenings")

@@ -63,7 +63,7 @@ def add_to_database(json):
         db.add(movie)
         db.commit()
     except Exception as e:
-        print(e)
+       db.rollback()
 
 
 with open("./initializer/IMDB-Movie-Data.csv", encoding="utf-8") as csvfile:

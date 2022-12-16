@@ -1,3 +1,4 @@
+import datetime
 from passlib.context import CryptContext
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
@@ -19,7 +20,8 @@ def get_password_hash(password):
 
 
 class Settings(BaseModel):
-    authjwt_secret_key: str = "secret"
+    authjwt_secret_key = "secret"
+    authjwt_access_token_expires = datetime.timedelta(days=3)
 
 
 @AuthJWT.load_config
