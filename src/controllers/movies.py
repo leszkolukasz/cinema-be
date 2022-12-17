@@ -84,6 +84,7 @@ def get_screening_days(
     try:
         dates = get_screening_days_by_movie_id(db, movie_id)
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail="Server error")
     return [date[0] for date in dates]
 

@@ -76,6 +76,8 @@ with open("./initializer/IMDB-Movie-Data.csv", encoding="utf-8") as csvfile:
             for col in row:
                 names.append(col)
         else:
+            if row_num > 100:
+                break
             entry = dict()
             for idx, col in enumerate(row):
                 entry[names[idx]] = col

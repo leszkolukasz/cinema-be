@@ -13,7 +13,7 @@ db = SessionLocal()
 fake = Faker()
 
 i = 0
-while i < 1000:
+while i < 100:
     try:
         cinema = get_random_cinema(db)
         if len(cinema.rooms) == 0:

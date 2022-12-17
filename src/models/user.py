@@ -1,8 +1,9 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint, event
 from sqlalchemy.orm import relationship
 
 from .base import Base
 from .constraints import nonnegative
+from .triggers import validate_seat_func, validate_seat_trigger
 
 
 class User(Base):
@@ -30,6 +31,18 @@ class Reservation(Base):
     seat = Column(
         Integer, nonnegative("seat"), nullable=False
     )  # needs trigger to check if is correct
-    
+
     screening = relationship("Screening", back_populates="reservations")
     user = relationship("User", back_populates="reservations")
+
+
+event.listen(
+    Reservation.__table__,
+    "after_create",
+    validate_seat_func.execute_if(dialect="postgresql"),
+)
+event.listen(
+    Reservation.__table__,
+    "after_create",
+    validate_seat_trigger.execute_if(dialect="postgresql"),
+)
