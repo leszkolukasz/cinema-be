@@ -42,3 +42,39 @@ def get_reviews(
     db: Session = Depends(get_db),
 ):
     return get_reviews_by_movie_id(db, movieId)
+
+@app.get("/screenings/{movieId}/days", response_model=list[str])
+def get_screening_days(
+    movieId: int,
+    db: Session = Depends(get_db),
+):
+    dates = get_screening_days_by_movie_id(db, movieId)
+    return [date[0] for date in dates]
+
+@app.get("/screenings/{movieId}/days/{day}/cinemas", response_model=list[dto.Cinema])
+def get_screening_cinemas(
+    movieId: int,
+    day: str,
+    db: Session = Depends(get_db),
+):
+    cinemas = get_screening_cinemas_by_movie_id_and_day(db, movieId, day)
+    return cinemas
+
+@app.get("/screenings/{movieId}/days/{day}/cinemas/{cinema_id}", response_model=list[dto.Screening])
+def get_screenings_for_day_and_cinema_and_movie(
+    movieId: int,
+    day: str,
+    cinema_id: int,
+    db: Session = Depends(get_db),
+):
+    screenings = get_screening_by_cinema_id_and_movie_id_and_day(db, movieId, day, cinema_id)
+    return [dto.Screening.from_orm(screening) for screening in screenings]
+
+
+@app.get("/screenings/{screeningId}/free-seats", response_model=list[int])
+def get_free_seats_for_screaning(
+    screeningId: int,
+    db: Session = Depends(get_db),
+):
+    seats = get_free_seats_for_screening_by_screening_id(db, screeningId)
+    return seats

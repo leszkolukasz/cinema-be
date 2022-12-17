@@ -13,8 +13,11 @@ from src.services import *
 def sign_up(user: dto.User, db: Session = Depends(get_db)):
     create_user(db, user.login, user.password)
 
-@app.post('/login')
-def login(user: dto.User, Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)):
+
+@app.post("/login")
+def login(
+    user: dto.User, Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)
+):
     db_user = find_user_by_login(db, user.login)
 
     if not verify_password(user.password, db_user.hashed_password):
@@ -23,14 +26,30 @@ def login(user: dto.User, Authorize: AuthJWT = Depends(), db: Session = Depends(
     access_token = Authorize.create_access_token(subject=db_user.id)
     return {"token": access_token, "username": db_user.login}
 
+
 @app.get("/reservations", response_model=list[dto.Reservation])
 def get_reservations(Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)):
     Authorize.jwt_required()
-    reservations =  get_reservations_by_user_id(db, Authorize.get_jwt_subject())
+    reservations = get_reservations_by_user_id(db, Authorize.get_jwt_subject())
     return [dto.Reservation.from_orm(el) for el in reservations]
 
+
 @app.delete("/reservations/{id}")
-def delete_reservation(id: int, Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)):
+def delete_reservation(
+    id: int, Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)
+):
     Authorize.jwt_required()
     if not delete_reservation_by_id(db, Authorize.get_jwt_subject(), id):
         raise HTTPException(status_code=401, detail="Unauthorized")
+
+
+@app.post("/reserve")
+def reserve_seat(
+    reservation: dto.Reservation,
+    Authorize: AuthJWT = Depends(),
+    db: Session = Depends(get_db),
+):
+    Authorize.jwt_required()
+    reserve_seat_for_user(
+        db, reservation.id, Authorize.get_jwt_subject(), reservation.seat
+    )

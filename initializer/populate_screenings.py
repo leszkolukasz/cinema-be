@@ -5,7 +5,7 @@ from src.database.setup import SessionLocal
 from src.database.setup import engine
 from src.models.base import Base
 import src.models as models
-from initializer.getters import get_random_cinema, get_random_room
+from initializer.getters import get_random_cinema, get_random_movie, get_random_room
 
 Base.metadata.create_all(bind=engine)
 
@@ -13,7 +13,7 @@ db = SessionLocal()
 fake = Faker()
 
 i = 0
-while i < 100:
+while i < 10000:
     try:
         cinema = get_random_cinema(db)
         if len(cinema.rooms) == 0:
@@ -21,7 +21,7 @@ while i < 100:
 
         room = random.choice(cinema.rooms)
         screening = models.Screening(
-            movie_id=cinema.id,
+            movie_id=get_random_movie(db).id,
             room_id=room.id,
             start_time=fake.future_datetime()
         )

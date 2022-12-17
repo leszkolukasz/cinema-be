@@ -9,11 +9,12 @@ class User(BaseModel):
 
 class Reservation(BaseModel):
     id: int
-    movie_id: int
-    movie_title: str
-    movie_poster_url: str
-    room_name: str
-    start_time: datetime.datetime
+    movie_id: int | None
+    movie_title: str | None
+    movie_poster_url: str | None
+    screening_id: int | None
+    room_name: str | None
+    start_time: datetime.datetime | None
     seat: int
 
     def from_orm(other):

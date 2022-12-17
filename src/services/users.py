@@ -24,3 +24,8 @@ def delete_reservation_by_id(db, user_id, reservation_id):
     db.delete(reservation)
     db.commit()
     return True
+
+def reserve_seat_for_user(db, screening_id, user_id, seat):
+    reservation = models.Reservation(screening_id=screening_id, user_id=user_id, seat=seat)
+    db.add(reservation)
+    db.commit()
