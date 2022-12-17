@@ -44,6 +44,17 @@ def get_reviews_by_movie_id(db, movie_id):
     )
 
 
+def get_available_movies(db):
+    now = datetime.datetime.utcnow()
+    return (
+        db.query(models.Movie)
+        .distinct(models.Movie.id)
+        .join(models.Screening)
+        .filter(models.Screening.start_time >= now)
+        .all()
+    )
+
+
 def get_screening_days_by_movie_id(db, movie_id):
     now = datetime.datetime.utcnow()
     return (

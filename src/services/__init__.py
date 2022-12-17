@@ -9,6 +9,7 @@ from .movies import (
     get_screening_by_cinema_id_and_movie_id_and_day,
     get_free_seats_for_screening_by_screening_id,
     get_screening_by_id,
+    get_available_movies
 )
 from .security import get_password_hash, verify_password
 from .users import (

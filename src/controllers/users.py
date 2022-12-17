@@ -11,14 +11,20 @@ from src.services import *
 
 @app.post("/sign-up")
 def sign_up(user: dto.User, db: Session = Depends(get_db)):
-    create_user(db, user.login, user.password)
+    try:
+        create_user(db, user.login, user.password)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Server error")
 
 
 @app.post("/login")
 def login(
     user: dto.User, Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)
 ):
-    db_user = find_user_by_login(db, user.login)
+    try:
+        db_user = find_user_by_login(db, user.login)
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Bad username or password")
 
     if not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Bad username or password")
@@ -30,7 +36,10 @@ def login(
 @app.get("/reservations", response_model=list[dto.Reservation])
 def get_reservations(Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)):
     Authorize.jwt_required()
-    reservations = get_reservations_by_user_id(db, Authorize.get_jwt_subject())
+    try:
+        reservations = get_reservations_by_user_id(db, Authorize.get_jwt_subject())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Server error")
     return [dto.Reservation.from_orm(el) for el in reservations]
 
 
@@ -50,6 +59,9 @@ def reserve_seat(
     db: Session = Depends(get_db),
 ):
     Authorize.jwt_required()
-    reserve_seat_for_user(
-        db, reservation.id, Authorize.get_jwt_subject(), reservation.seat
-    )
+    try:
+        reserve_seat_for_user(
+            db, reservation.id, Authorize.get_jwt_subject(), reservation.seat
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Server error")
