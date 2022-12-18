@@ -59,7 +59,7 @@ def get_screening_days_by_movie_id(db, movie_id):
     now = datetime.datetime.utcnow()
     return (
         db.query(func.DATE(models.Screening.start_time))
-        .distinct(func.DATE(models.Screening.start_time))
+        .distinct()
         .filter(
             and_(
                 models.Screening.movie_id == movie_id,

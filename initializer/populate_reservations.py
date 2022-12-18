@@ -11,7 +11,7 @@ Base.metadata.create_all(bind=engine)
 db = SessionLocal()
 
 i = 0
-while i < 100:
+while i < 10:
     try:
         user = get_random_user(db)
         screening = get_random_screening(db)

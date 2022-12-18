@@ -13,7 +13,7 @@ db = SessionLocal()
 gen = DocumentGenerator()
 
 i = 0
-while i < 100:
+while i < 10:
     try:
         review = models.Review(
             movie_id=get_random_movie(db).id,

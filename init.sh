@@ -1,4 +1,7 @@
 export PYTHONPATH=.
+
+sleep 10
+
 python3 ./initializer/populate_movies.py
 python3 ./initializer/populate_users.py
 python3 ./initializer/populate_cinemas.py

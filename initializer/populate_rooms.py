@@ -13,7 +13,7 @@ db = SessionLocal()
 gen = DocumentGenerator()
 
 i = 0
-while i < 100:
+while i < 10:
     try:
         room = models.Room(
             name=f"room-{random.randint(1, 1000000)}",

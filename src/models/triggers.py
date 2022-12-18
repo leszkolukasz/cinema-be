@@ -36,10 +36,13 @@ validate_reservation_time_func = DDL("""
         AS
     $$
     DECLARE
-        screening RECORD;
+        screening screenings%%ROWTYPE;
+        movie movies%%ROWTYPE;
     BEGIN
         SELECT * INTO screening FROM screenings WHERE screening.id = NEW.screening_id;
-        IF EXISTS (SELECT * FROM (SELECT * FROM screenings WHERE screenings.room_id = screening.room_id) screenings JOIN movies ON screenings.movie_id = movies.id WHERE MIN(screenings.start_time + movies.length * interval '1 second', screening.start_time + movies.length * interval '1 second') <= MAX(screenings.start_time, screening.start_time)) THEN
+        SELECT * INTO movie FROM movies WHERE movies.id = screening.movie_id;
+
+        IF EXISTS (SELECT * FROM (SELECT * FROM screenings WHERE screenings.room_id = screening.room_id) screenings JOIN movies ON screenings.movie_id = movies.id WHERE LEAST(screenings.start_time + movies.length * interval '1 second', screening.start_time + movie.length * interval '1 second') >= GREATEST(screenings.start_time, screening.start_time)) THEN
             RAISE EXCEPTION 'reservations overlap';
         END IF;
 
