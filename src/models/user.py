@@ -3,7 +3,12 @@ from sqlalchemy.orm import relationship
 
 from .base import Base
 from .constraints import nonnegative
-from .triggers import validate_seat_func, validate_seat_trigger
+from .triggers import (
+    validate_seat_func,
+    validate_seat_trigger,
+    validate_reservation_time_func,
+    validate_reservation_time_trigger,
+)
 
 
 class User(Base):
@@ -45,4 +50,15 @@ event.listen(
     Reservation.__table__,
     "after_create",
     validate_seat_trigger.execute_if(dialect="postgresql"),
+)
+
+event.listen(
+    Reservation.__table__,
+    "after_create",
+    validate_reservation_time_func.execute_if(dialect="postgresql"),
+)
+event.listen(
+    Reservation.__table__,
+    "after_create",
+    validate_reservation_time_trigger.execute_if(dialect="postgresql"),
 )

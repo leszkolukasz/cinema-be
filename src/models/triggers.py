@@ -11,7 +11,7 @@ validate_seat_func = DDL("""
     BEGIN
        max_seat := (SELECT rooms.length * rooms.width - 1 FROM (SELECT * FROM screenings WHERE id = NEW.screening_id) as screenings, rooms WHERE screenings.room_id = rooms.id);
        IF NEW.seat > max_seat THEN
-           RAISE EXCEPTION \'incorrect seat number\';
+           RAISE EXCEPTION 'incorrect seat number';
        END IF;
 
        RETURN NEW;
@@ -26,4 +26,33 @@ validate_seat_trigger = DDL(
     "ON reservations "
     "FOR EACH ROW "
     "EXECUTE PROCEDURE validate_seat_func(); "
+)
+
+
+validate_reservation_time_func = DDL("""
+    CREATE OR REPLACE FUNCTION  validate_reservation_time_func()
+        RETURNS TRIGGER
+        LANGUAGE PLPGSQL
+        AS
+    $$
+    DECLARE
+        screening RECORD;
+    BEGIN
+        SELECT * INTO screening FROM screenings WHERE screening.id = NEW.screening_id;
+        IF EXISTS (SELECT * FROM (SELECT * FROM screenings WHERE screenings.room_id = screening.room_id) screenings JOIN movies ON screenings.movie_id = movies.id WHERE MIN(screenings.start_time + movies.length * interval '1 second', screening.start_time + movies.length * interval '1 second') <= MAX(screenings.start_time, screening.start_time)) THEN
+            RAISE EXCEPTION 'reservations overlap';
+        END IF;
+
+       RETURN NEW;
+    END;
+    $$
+    """
+)
+
+validate_reservation_time_trigger = DDL(
+    "CREATE TRIGGER validate_reservation_time_trigger "
+    "AFTER UPDATE OR INSERT "
+    "ON reservations "
+    "FOR EACH ROW "
+    "EXECUTE PROCEDURE validate_reservation_time_func(); "
 )

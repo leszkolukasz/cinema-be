@@ -42,7 +42,7 @@ class Screening(Base):
     room_id = Column(Integer, ForeignKey("rooms.id"), nullable=False)
     start_time = Column(
         DateTime, nullable=False
-    )  # trigger zeby w tym samym czasie, pokoju nie byly 2 screeningi
+    )
 
     movie = relationship("Movie", back_populates="screenings")
     room = relationship("Room", back_populates="screenings")
