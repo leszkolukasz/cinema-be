@@ -5,13 +5,14 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-COPY Pipfile Pipfile.lock .
+COPY Pipfile Pipfile.lock ./
 
 RUN pip3 install pipenv
 RUN pipenv install --system --deploy
 
-COPY . .
-RUN rm -f /app/done.txt
+WORKDIR /docker-tmp
+RUN touch /docker-tmp/set-up
+WORKDIR /app
 
 EXPOSE 8000
 

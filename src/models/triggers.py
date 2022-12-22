@@ -1,6 +1,7 @@
 from sqlalchemy import DDL
 
-validate_seat_func = DDL("""
+validate_seat_func = DDL(
+    """
     CREATE OR REPLACE FUNCTION  validate_seat_func()
         RETURNS TRIGGER
         LANGUAGE PLPGSQL
@@ -29,7 +30,8 @@ validate_seat_trigger = DDL(
 )
 
 
-validate_reservation_time_func = DDL("""
+validate_reservation_time_func = DDL(
+    """
     CREATE OR REPLACE FUNCTION  validate_reservation_time_func()
         RETURNS TRIGGER
         LANGUAGE PLPGSQL
